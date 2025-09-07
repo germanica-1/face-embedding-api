@@ -15,7 +15,7 @@ EMBEDDING_COLUMNS = [
     "face_embedding_right"
 ]
 
-# Columns for images (optional, if needed)
+# Columns for images 
 IMAGE_URL_COLUMNS = [
     "face_image_front_url",
     "face_image_low_angle_url",

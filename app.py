@@ -9,7 +9,7 @@ from flask_cors import CORS
 import json
 
 app = Flask(__name__)
-CORS(app)  # Allow frontend requests during development
+CORS(app) 
 
 @app.route("/api/process-embeddings", methods=["POST"])
 

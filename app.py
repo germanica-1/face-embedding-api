@@ -12,15 +12,17 @@ app = Flask(__name__)
 CORS(app) 
 
 @app.route("/api/process-embeddings", methods=["POST"])
-
-
 def process_embeddings():
     students = fetch_students_without_embeddings()
-    if not students:
-        return jsonify({"status": "success", "processed": 0, "message": "No students need embeddings"})
-
     processed_count = 0
     debug_data = {}  # store embeddings for JSON file
+
+    if not students:
+        return jsonify({
+            "status": "success",
+            "processed": processed_count,
+            "message": "No students need embeddings"
+        })
 
     for student in students:
         full_name = student.get("full_name") or student.get("name")
@@ -44,19 +46,19 @@ def process_embeddings():
             embeddings.append(emb)
 
         if embeddings:
-            # Save to JSON for debugging
             debug_data[full_name] = [e.tolist() for e in embeddings]
-
-            # Update Supabase
             update_student_embeddings(full_name, embeddings)
             processed_count += 1
 
     # Write JSON file
-    with open("debug_embeddings.json", "w") as f:
+    with open("local_embeddings.json", "w") as f:
         json.dump(debug_data, f, indent=2)
 
-    return jsonify({"status": "success", "processed": processed_count})
-
+    return jsonify({
+        "status": "success",
+        "processed": processed_count,
+        "message": f"Processed embeddings for {processed_count} student(s)"
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)

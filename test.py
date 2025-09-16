@@ -10,7 +10,7 @@ from config import SUPABASE_URL, SUPABASE_KEY
 FACE_SIZE = (160, 160)
 THRESHOLD = 0.35   # tune for your dataset/environment
 SIM_METRIC = "cosine"
-CAM_INDEX = 1      # change if wrong webcam
+CAM_INDEX = 0      # change if wrong webcam
 
 # ---------------- Supabase ----------------
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)

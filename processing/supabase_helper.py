@@ -67,12 +67,31 @@ def base64_to_rgb(base64_str):
         print("[ERROR] Failed to decode base64 image:", e)
     return None
 
+def clear_base64_images(student_name):
+    """
+    After embeddings are computed, clear base64 columns to reduce DB size.
+    """
+    # Replace with your actual Base64 columns in DB
+    BASE64_COLUMNS = [
+        "face_image_front_url",
+        "face_image_low_angle_url",
+        "face_image_left_url",
+        "face_image_right_url"
+    ]
+
+    clear_data = {col: None for col in BASE64_COLUMNS}
+
+    try:
+        res = supabase.table("students").update(clear_data).eq("full_name", student_name).execute()
+        if res.data and len(res.data) > 0:
+            print(f"[INFO] Cleared base64 images for {student_name}")
+        else:
+            print(f"[WARN] No rows updated when clearing base64 for {student_name}")
+    except Exception as e:
+        print(f"[ERROR] Failed to clear base64 images for {student_name}:", e)
+
 
 def update_student_embeddings(student_name, embeddings):
-    """
-    Update embeddings for a student by full_name.
-    embeddings: list of numpy arrays in the same order as EMBEDDING_COLUMNS.
-    """
     if not embeddings:
         print(f"[WARN] No embeddings to update for {student_name}")
         return
@@ -83,12 +102,12 @@ def update_student_embeddings(student_name, embeddings):
 
     try:
         res = supabase.table("students").update(data).eq("full_name", student_name).execute()
-
-        # Check if data was updated
         if res.data and len(res.data) > 0:
             print(f"[INFO] Updated embeddings for {student_name}")
+    
+            clear_base64_images(student_name)
+
         else:
             print(f"[WARN] No rows updated for {student_name}. Check spelling or column.")
-
     except Exception as e:
         print(f"[ERROR] Updating embeddings for {student_name} failed:", e)
